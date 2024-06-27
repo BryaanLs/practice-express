@@ -20,7 +20,15 @@ export const validateUser = [
     .isLength({ min: 11, max: 11 })
     .withMessage("Invalid phone number! The correct format is: 11900000000"),
   body("email").isEmail().withMessage("Invalid email address"),
-
+  body("password")
+    .isLength({ min: 6 })
+    .withMessage("Password must be at least 6 characters long")
+    .matches(/[A-Z]/)
+    .withMessage("Password must contain at least one uppercase letter")
+    .matches(/\d/)
+    .withMessage("Password must contain at least one number")
+    .matches(/[!@#$%^&*(),.?":{}|<>]/)
+    .withMessage("Password must contain at least one special character"),
   (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {

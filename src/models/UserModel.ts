@@ -10,11 +10,6 @@ const UserSchema = new Schema({
     type: String,
     require: true,
   },
-  email: {
-    type: String,
-    require: true,
-    unique: true,
-  },
   cpf: {
     type: Number,
     require: true,
@@ -28,6 +23,16 @@ const UserSchema = new Schema({
   phone: {
     type: Number,
     require: false,
+  },
+  email: {
+    type: String,
+    require: true,
+    unique: true,
+  },
+  password: {
+    type: String,
+    select: false,
+    require: true,
   },
 });
 
