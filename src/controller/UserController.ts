@@ -1,25 +1,23 @@
 import { Request, Response } from "express";
 import { UserModel } from "../models/UserModel";
-import jwt from "jsonwebtoken";
+
 import bcrypt from "bcryptjs";
 import { config } from "dotenv";
-import { JwtResponse } from "../types/types";
+import { JwtResponse, JwtPayload } from "../types/types";
 import { createJwtToken } from "../services/JwtAuth";
 config({ path: "../.env" });
 
 export const UserController = {
-  async create(req: Request, res: Response): Promise<void> {
+  async create(req: Request, res: Response): Promise<Response> {
     try {
       const { id, name, lastname, cpf, rg, phone, email, password } = req.body;
 
-      // Verifique se um usuário já existe com o mesmo CPF, RG ou email
       const existingUser = await UserModel.findOne({
         $or: [{ cpf }, { rg }, { email }],
       });
-      // console.log(existingUser);
 
       if (existingUser) {
-        res.status(400).json({
+        return res.status(400).json({
           msg: "User with the same CPF, RG or email already exists.",
         });
       } else {
@@ -46,15 +44,35 @@ export const UserController = {
 
         await UserModel.create({ ...user, password: pass });
 
-        res.status(201).json({
+        return res.status(201).json({
           msg: "User created successfully!",
           user,
           credentials,
         });
       }
     } catch (error) {
-      res.status(500).json({ msg: "Internal server error", error });
-      console.log("error", error);
+      return res.status(500).json({ msg: "Internal server error", error });
     }
+  },
+  async login(req: Request, res: Response): Promise<Response> {
+    const user = req.body.user;
+    const isMatch = await bcrypt.compare(req.body.password, user.password);
+
+    if (!isMatch) {
+      return res.status(401).json({ msg: "Unauthorized" });
+    }
+    const { _id, name, lastname, cpf, rg, phone, email }: JwtPayload =
+      user.toObject();
+    const jwtPayload: JwtPayload = {
+      _id,
+      name,
+      lastname,
+      cpf,
+      rg,
+      phone,
+      email,
+    };
+    const credentials: JwtResponse = await createJwtToken(jwtPayload);
+    return res.status(200).json({ msg: "User Authorized", credentials });
   },
 };
