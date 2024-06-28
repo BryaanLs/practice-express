@@ -7,11 +7,11 @@ export async function loginValidator(
   next: NextFunction
 ): Promise<Response | void> {
   const user = await UserModel.findOne({ email: req.body.email });
+
   if (!user) {
     return res.status(404).json({ msg: "User not found" });
   } else {
-    req.body = user;
+    req.body = { ...req.body, user };
+    next();
   }
-
-  next();
 }

@@ -55,7 +55,7 @@ export const UserController = {
     }
   },
   async login(req: Request, res: Response): Promise<Response> {
-    const user = req.body.user;
+    const { user } = req.body;
     const isMatch = await bcrypt.compare(req.body.password, user.password);
 
     if (!isMatch) {

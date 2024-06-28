@@ -1,18 +1,22 @@
 POST http://localhost:3000/api/user/register
 Content-Type: application/json
-{  "name": "Bryan";
-  "lastname": "Soares";
-  "cpf": 11111111111;
-  "rg": 111111111;
-  "phone": 11900000000;
-  "email": "bryan.soares@bisga.com";
-  "password": "aaaaa";}
+
+{
+  "name": "Bryan",
+  "lastname": "Soares",
+  "cpf": 11111111111,
+  "rg": 111111111,
+  "phone": 11900000000,
+  "email": "bryan.soares@bisga.com",
+  "password": "aaaaaaA1!"
+}   
 ###
-POST http://localhost:3000/api/login
+
+POST http://localhost:3000/api/user/login
 Content-Type: application/json
 
 {
-    "email": "",
-    "password": ""
+    "email": "bryan.soares@bisga.com",
+    "password": "aaaaaaA1!"
 }
 ###
