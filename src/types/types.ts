@@ -6,11 +6,9 @@ export type JwtResponse = {
 };
 
 export type JwtPayload = {
-  _id?: string;
   name: string;
   lastname: string;
   cpf: number;
-  rg: number;
   phone: number;
   email: string;
 };
