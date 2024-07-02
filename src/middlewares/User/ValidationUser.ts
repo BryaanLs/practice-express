@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { ZodError } from "zod";
-import { userValidate } from "../validations/userValidate";
+import { userValidate } from "../../validations/userValidate";
 import validate from "validation-br";
 export async function validateUser(
   req: Request,

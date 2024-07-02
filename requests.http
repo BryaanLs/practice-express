@@ -4,11 +4,10 @@ Content-Type: application/json
 {
   "name": "Bryan",
   "lastname": "Soares",
-  "cpf": "11111211111",
-  "rg": "111112111",
+  "cpf": "40967773822",
   "phone": "11900000000",
-  "email": "bryan.soares@xernas.com",
-  "password": "aaaaaaA1!"
+  "email": "bryan.soares@xerninhas.com",
+  "password": "aaaaaaA1!!"
 }   
 ###
 

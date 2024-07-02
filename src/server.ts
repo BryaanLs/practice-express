@@ -1,9 +1,10 @@
 import express from "express";
 import cors from "cors";
-import { conn } from "../src/db/conn";
+import { conn } from "./db/mongoConection";
 import { routes } from "./routes/routes";
-import { rateLimiter } from "./middlewares/RateLimit";
+import { rateLimiter } from "./middlewares/global/RateLimit";
 import helmet from "helmet";
+import redisClient from "./db/redisConnection";
 
 const app = express();
 
@@ -16,15 +17,12 @@ app.use(routes);
 async function server(): Promise<void> {
   try {
     await conn();
-    app.get("/", (req, res) => {
-      res.send("A rota ta funfando");
-    });
+    await redisClient.connect();
+    console.log("Conectado ao redis =D");
 
     app.listen(3000, () => {
       console.log("Server runing at 3000");
     });
-
-    
   } catch (error) {
     console.log(error);
   }
