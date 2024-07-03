@@ -9,6 +9,7 @@ import { redisConn } from "./db/redisConnection";
 import { config } from "dotenv";
 import { envPath } from "./env/environment";
 config({ path: envPath });
+
 const app = express();
 
 app.use(helmet());

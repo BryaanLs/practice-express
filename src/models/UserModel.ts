@@ -1,12 +1,13 @@
 import { Schema, model, Document } from "mongoose";
 
-interface User extends Document {
+interface IUser extends Document {
   name: string;
   lastname: string;
   cpf: string;
   phone: string;
   email: string;
   password: string;
+  accessLevel: "user" | "admin";
 }
 
 const UserSchema = new Schema({
@@ -16,8 +17,9 @@ const UserSchema = new Schema({
   phone: { type: String, require: false },
   email: { type: String, require: true, unique: true },
   password: { type: String, require: true },
+  accessLevel: { type: String, require: true },
 });
 
-const UserModel = model<User>("User", UserSchema);
+const UserModel = model<IUser>("User", UserSchema);
 
 export { UserModel };
