@@ -2,11 +2,11 @@ POST http://localhost:3000/api/user/register
 Content-Type: application/json
 
 {
-  "name": "Bryan",
-  "lastname": "Soares",
-  "cpf": "40967773822",
+  "name": "Joao",
+  "lastname": "Da Silva",
+  "cpf": "44356564006",
   "phone": "11900000000",
-  "email": "bryanluccas@hotmail.com",
+  "email": "example@gmail.com",
   "password": "aaaaaaA1!!"
 }   
 ###

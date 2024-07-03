@@ -1,6 +1,7 @@
 import { createClient } from "redis";
 import { config } from "dotenv";
-config({ path: "../.env" });
+import { envPath } from "../env/environment";
+config({ path: envPath });
 
 const redisClient = createClient({
   password: process.env.REDIS_PASS,

@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { UserModel } from "../models/UserModel";
 import bcrypt from "bcryptjs";
-import { config } from "dotenv";
 import { JwtResponse, JwtPayload } from "../types/types";
 import { createJwtToken } from "../services/JwtAuth";
 import transporter from "../services/Nodemailer";
@@ -10,7 +9,9 @@ import { randomUUID } from "crypto";
 import jwt from "jsonwebtoken";
 import path from "path";
 import ejs from "ejs";
-config({ path: "../.env" });
+import { config } from "dotenv";
+import { envPath } from "../env/environment";
+config({ path: envPath });
 
 export const UserController = {
   async register(req: Request, res: Response): Promise<Response> {
@@ -31,7 +32,7 @@ export const UserController = {
         { ...user, referenceId: uuid },
         60
       );
-      const url = `http://localhost:3000/api/user/confirmation/${jwtPayload.token}`;
+      const url = `${process.env.BASE_URL}/api/user/confirmation/${jwtPayload.token}`;
 
       const templatePath = path.join(
         __dirname,
@@ -40,6 +41,7 @@ export const UserController = {
       const html = await ejs.renderFile(templatePath, {
         url,
       });
+
       const info = await transporter.sendMail({
         to: req.body.email,
         subject: "Confirme seu cadastro",
@@ -74,7 +76,7 @@ export const UserController = {
       await UserModel.create({ ...user, password });
       return res.status(200).json({
         msg: "User created with sucessful!",
-        userData: { ...user, password },
+        userData: { ...user },
       });
     } catch (error) {
       console.log(error);

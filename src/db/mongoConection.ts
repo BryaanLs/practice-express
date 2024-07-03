@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { config } from "dotenv";
-config({ path: "./src/.env" });
+import { envPath } from "../env/environment";
+config({ path: envPath });
 
 export async function conn(): Promise<void> {
   try {
