@@ -5,8 +5,11 @@ import { config } from "dotenv";
 import { JwtResponse, JwtPayload } from "../types/types";
 import { createJwtToken } from "../services/JwtAuth";
 import transporter from "../services/Nodemailer";
-import redisClient from "../db/redisConnection";
+import { redisClient } from "../db/redisConnection";
 import { randomUUID } from "crypto";
+import jwt from "jsonwebtoken";
+import path from "path";
+import ejs from "ejs";
 config({ path: "../.env" });
 
 export const UserController = {
@@ -23,26 +26,56 @@ export const UserController = {
       const { password, ...user } = req.body;
       const redisPayload = { ...req.body, referenceId: uuid };
       await redisClient.setEx(uuid, 3600, JSON.stringify(redisPayload));
-      const token: JwtResponse = await createJwtToken(user, 60);
-      const url = `http://localhost:3000/confirmation/${token}`;
 
+      const jwtPayload: JwtResponse = await createJwtToken(
+        { ...user, referenceId: uuid },
+        60
+      );
+      const url = `http://localhost:3000/api/user/confirmation/${jwtPayload.token}`;
+
+      const templatePath = path.join(
+        __dirname,
+        "../templates/confirmationEmail.ejs"
+      );
+      const html = await ejs.renderFile(templatePath, {
+        url,
+      });
       const info = await transporter.sendMail({
         to: req.body.email,
         subject: "Confirme seu cadastro",
-        html: `Clique no link para confirmar seu cadastro: <a href="${url}">${url}</a>`,
+        html,
       });
-      return res.status(200).json({ message: "Confirmation email sent", info });
+      return res.status(200).json({
+        message: `Confirmation email sent to: ${req.body.email}`,
+        info: { messageId: info.messageId },
+      });
     } catch (error) {
       console.log(error);
-
       return res.status(500).json({ message: "Internal server error", error });
     }
   },
 
   async confirmation(req: Request, res: Response): Promise<Response> {
     try {
-      await UserModel.create({ ...req.body });
-      return res.status(200);
+      const { token } = req.params;
+
+      const decoded: any = jwt.verify(token, process.env.SECRET_KEY as string);
+
+      const userData = await redisClient.get(decoded.referenceId);
+      if (!userData) {
+        return res.status(400).json({
+          message:
+            "Invalid or expired token, try again or contact our support: zlucason1@gmail.com",
+        });
+      }
+
+      const { referenceId, password, ...user } = JSON.parse(userData);
+
+      await UserModel.create({ ...user, password });
+      return res.status(200).json({
+        msg: "User created with sucessful!",
+        userData: { ...user, password },
+      });
     } catch (error) {
       console.log(error);
 

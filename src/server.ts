@@ -4,7 +4,7 @@ import { conn } from "./db/mongoConection";
 import { routes } from "./routes/routes";
 import { rateLimiter } from "./middlewares/global/RateLimit";
 import helmet from "helmet";
-import redisClient from "./db/redisConnection";
+import { redisConn } from "./db/redisConnection";
 
 const app = express();
 
@@ -17,12 +17,13 @@ app.use(routes);
 async function server(): Promise<void> {
   try {
     await conn();
-    await redisClient.connect();
-    console.log("Conectado ao redis =D");
-
+    console.log("Conectado no MongoDB");
+    await redisConn();
+    console.log("Conectado ao Redis");
     app.listen(3000, () => {
       console.log("Server runing at 3000");
     });
+    // console.table({ mongoDB: true, RedisCaching: true, serverOn: true });
   } catch (error) {
     console.log(error);
   }

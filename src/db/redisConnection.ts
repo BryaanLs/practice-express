@@ -2,7 +2,6 @@ import { createClient } from "redis";
 import { config } from "dotenv";
 config({ path: "../.env" });
 
-// Verificar a mudança do password
 const redisClient = createClient({
   password: process.env.REDIS_PASS,
   socket: {
@@ -11,4 +10,17 @@ const redisClient = createClient({
   },
 });
 
-export default redisClient;
+async function redisConn(): Promise<void> {
+  redisClient.connect();
+  return new Promise((resolve, reject) => {
+    redisClient.on("connect", () => {
+      resolve();
+    });
+
+    redisClient.on("error", (err) => {
+      console.log("Erro na conexão no redis");
+      reject(err);
+    });
+  });
+}
+export { redisClient, redisConn };

@@ -12,11 +12,7 @@ userRoutes.post(
   userExists,
   UserController.register
 );
-userRoutes.post(
-  "/user/confirmation/:token",
-  validateUser,
-  UserController.confirmation
-);
+userRoutes.get("/user/confirmation/:token", UserController.confirmation);
 userRoutes.post("/user/login", loginValidator, UserController.login);
 
 export default userRoutes;
